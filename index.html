@@ -970,6 +970,22 @@ addEventListener('resize',re);addEventListener('load',re);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(re);
 layout();render(false);update();tick();
 })();
+/* iPhone fix: hide whichever face of the phone is turned away */
+(function(){
+var pL=document.getElementById('pL'),
+    f=document.querySelector('#pL>.face:not(.bk)'),
+    b=document.querySelector('#pL>.face.bk');
+function fix(){
+  var m=/rotateY\(([-\d.]+)deg\)/.exec(pL.style.transform||''),
+      a=m?parseFloat(m[1]):180;
+  f.style.visibility=a<90?'visible':'hidden';
+  b.style.visibility=a<90?'hidden':'visible';
+}
+addEventListener('scroll',function(){requestAnimationFrame(fix)},{passive:true});
+addEventListener('resize',fix);
+addEventListener('load',fix);
+fix();
+})();
 </script>
 </body>
 </html>
