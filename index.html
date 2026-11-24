@@ -970,21 +970,31 @@ addEventListener('resize',re);addEventListener('load',re);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(re);
 layout();render(false);update();tick();
 })();
-/* iPhone fix: hide whichever face of the phone is turned away */
+/* iPhone fix v2 */
 (function(){
+var st=document.createElement('style');
+st.textContent='.face,.face *{-webkit-backface-visibility:hidden;backface-visibility:hidden}';
+document.head.appendChild(st);
 var pL=document.getElementById('pL'),
     f=document.querySelector('#pL>.face:not(.bk)'),
     b=document.querySelector('#pL>.face.bk');
 function fix(){
   var m=/rotateY\(([-\d.]+)deg\)/.exec(pL.style.transform||''),
-      a=m?parseFloat(m[1]):180;
-  f.style.visibility=a<90?'visible':'hidden';
-  b.style.visibility=a<90?'hidden':'visible';
+      a=m?parseFloat(m[1]):180,
+      closed=a>=90;
+  f.style.visibility=closed?'hidden':'visible';
+  f.style.opacity=closed?'0':'1';
+  b.style.visibility=closed?'visible':'hidden';
+  b.style.opacity=closed?'1':'0';
 }
 addEventListener('scroll',function(){requestAnimationFrame(fix)},{passive:true});
 addEventListener('resize',fix);
 addEventListener('load',fix);
+setInterval(fix,200);
 fix();
+/* TEMPORARY test marker, delete these 2 lines once it works */
+var t=document.createElement('div');t.textContent='fix v2';
+t.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99;font:12px monospace;background:#111;color:#fff;padding:3px 6px;border-radius:6px';document.body.appendChild(t);
 })();
 </script>
 </body>
